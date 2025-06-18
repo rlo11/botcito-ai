@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Botcito.ai</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text-primary: #1d1d1f;
+            --text-secondary: #86868b;
+            --text-link: #0066cc;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f7;
+            --bg-dark: #000000;
+            --border-color: #d2d2d7;
+            --shadow-subtle: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
+            --success-green: #34c759;
+            --error-red: #ff3b30;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.47059;
+            font-weight: 400;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Simple Header */
+        .checkout-header {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px 0;
+        }
+
+        .header-container {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 0 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .security-badge::before {
+            content: '🔒';
+        }
+
+        /* Checkout Container */
+        .checkout-container {
+            max-width: 980px;
+            margin: 40px auto;
+            padding: 0 22px;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 40px;
+        }
+
+        /* Form Section */
+        .checkout-form {
+            background: var(--bg-primary);
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--text-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: var(--bg-primary);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--text-link);
+            box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .payment-method {
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            background: var(--bg-primary);
+        }
+
+        .payment-method:hover {
+            border-color: var(--text-link);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .payment-method.selected {
+            border-color: var(--text-link);
+            background: rgba(0, 102, 204, 0.05);
+        }
+
+        .payment-method img {
+            height: 32px;
+            margin-bottom: 8px;
+        }
+
+        .payment-method-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .payment-method-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Order Summary */
+        .order-summary {
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-card {
+            background: var(--bg-primary);
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .summary-title {
+            font-size: 21px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .item-details h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .item-details p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .item-price {
+            text-align: right;
+        }
+
+        .original-price {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-decoration: line-through;
+        }
+
+        .sale-price {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--success-green);
+        }
+
+        .summary-subtotal {
+            display: flex;
+            justify-content: space-between;
+            margin: 24px 0;
+            padding: 16px 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            font-size: 21px;
+            font-weight: 600;
+        }
+
+        .discount-badge {
+            display: inline-block;
+            background: var(--success-green);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+
+        /* Complete Order Button */
+        .complete-order-btn {
+            width: 100%;
+            background: var(--text-primary);
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .complete-order-btn:hover {
+            background: #424245;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .complete-order-btn:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Trust Badges */
+        .trust-badges {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .trust-badge-icon {
+            font-size: 20px;
+        }
+
+        /* Promo Code */
+        .promo-code-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .promo-input-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .promo-input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .promo-apply-btn {
+            padding: 10px 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .promo-apply-btn:hover {
+            background: var(--border-color);
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            background: var(--success-green);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        /* Loading State */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-overlay.show {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid white;
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-methods {
+                grid-template-columns: 1fr;
+            }
+            
+            .order-summary {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="checkout-header">
+        <div class="header-container">
+            <a href="index.html" class="logo">botcito.ai</a>
+            <div class="security-badge">Secure Checkout</div>
+        </div>
+    </header>
+
+    <!-- Checkout Content -->
+    <div class="checkout-container">
+        <!-- Left Column - Form -->
+        <div class="checkout-form">
+            <div class="success-message" id="successMessage">
+                <span>✓</span> Your order has been confirmed!
+            </div>
+
+            <!-- Contact Information -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span class="step-number">1</span>
+                    Contact Information
+                </h2>
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" class="form-input" placeholder="you@example.com" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" class="form-input" placeholder="John" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" class="form-input" placeholder="Doe" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span class="step-number">2</span>
+                    Payment Method
+                </h2>
+                <div class="payment-methods">
+                    <div class="payment-method selected" data-method="stripe">
+                        <div class="payment-method-icon">💳</div>
+                        <div class="payment-method-name">Credit/Debit Card</div>
+                    </div>
+                    <div class="payment-method" data-method="paypal">
+                        <div class="payment-method-icon">🅿️</div>
+                        <div class="payment-method-name">PayPal</div>
+                    </div>
+                </div>
+
+                <!-- Card Details (shown by default) -->
+                <div id="cardDetails">
+                    <div class="form-group">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" id="cardNumber" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiry">Expiry Date</label>
+                            <input type="text" id="expiry" class="form-input" placeholder="MM/YY" maxlength="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" class="form-input" placeholder="123" maxlength="4">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PayPal Option (hidden by default) -->
+                <div id="paypalDetails" style="display: none;">
+                    <p style="text-align: center; color: var(--text-secondary); padding: 40px 0;">
+                        You will be redirected to PayPal to complete your purchase.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Billing Address -->
+            <div class="form-section">
+                <h2 class="section-title">
+                    <span class="step-number">3</span>
+                    Billing Address
+                </h2>
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <select id="country" class="form-input">
+                        <option>United States</option>
+                        <option>Canada</option>
+                        <option>United Kingdom</option>
+                        <option>Australia</option>
+                        <option>Germany</option>
+                        <option>France</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="address">Street Address</label>
+                    <input type="text" id="address" class="form-input" placeholder="123 Main Street">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" class="form-input" placeholder="New York">
+                    </div>
+                    <div class="form-group">
+                        <label for="zipCode">ZIP/Postal Code</label>
+                        <input type="text" id="zipCode" class="form-input" placeholder="10001">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Order Summary -->
+        <div class="order-summary">
+            <div class="summary-card">
+                <h3 class="summary-title">Order Summary</h3>
+                
+                <div class="summary-item">
+                    <div class="item-details">
+                        <h4>Professional Pack</h4>
+                        <p>70 AI Bots + Bonus Content</p>
+                    </div>
+                    <div class="item-price">
+                        <div class="original-price">$540.00</div>
+                        <div class="sale-price">$57.00</div>
+                    </div>
+                </div>
+
+                <div class="promo-code-section">
+                    <div class="promo-input-group">
+                        <input type="text" class="promo-input" placeholder="Promo code">
+                        <button class="promo-apply-btn">Apply</button>
+                    </div>
+                </div>
+
+                <div class="summary-subtotal">
+                    <span>Subtotal</span>
+                    <span>$57.00</span>
+                </div>
+
+                <div class="summary-total">
+                    <span>Total</span>
+                    <span>$57.00<span class="discount-badge">89% OFF</span></span>
+                </div>
+
+                <button class="complete-order-btn" id="completeOrderBtn">
+                    <span>Complete Order</span>
+                    <span>→</span>
+                </button>
+
+                <div class="trust-badges">
+                    <div class="trust-badge">
+                        <span class="trust-badge-icon">🔒</span>
+                        <span>256-bit SSL Encryption</span>
+                    </div>
+                    <div class="trust-badge">
+                        <span class="trust-badge-icon">💰</span>
+                        <span>14-day Money Back Guarantee</span>
+                    </div>
+                    <div class="trust-badge">
+                        <span class="trust-badge-icon">⚡</span>
+                        <span>Instant Access After Purchase</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+        // Payment method switching
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        const cardDetails = document.getElementById('cardDetails');
+        const paypalDetails = document.getElementById('paypalDetails');
+
+        paymentMethods.forEach(method => {
+            method.addEventListener('click', () => {
+                paymentMethods.forEach(m => m.classList.remove('selected'));
+                method.classList.add('selected');
+                
+                if (method.dataset.method === 'stripe') {
+                    cardDetails.style.display = 'block';
+                    paypalDetails.style.display = 'none';
+                } else {
+                    cardDetails.style.display = 'none';
+                    paypalDetails.style.display = 'block';
+                }
+            });
+        });
+
+        // Card number formatting
+        const cardNumberInput = document.getElementById('cardNumber');
+        cardNumberInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+
+        // Expiry date formatting
+        const expiryInput = document.getElementById('expiry');
+        expiryInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            e.target.value = value;
+        });
+
+        // CVV formatting
+        const cvvInput = document.getElementById('cvv');
+        cvvInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/\D/g, '');
+        });
+
+        // Complete order
+        const completeOrderBtn = document.getElementById('completeOrderBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const successMessage = document.getElementById('successMessage');
+
+        completeOrderBtn.addEventListener('click', async () => {
+            // Basic validation
+            const email = document.getElementById('email').value;
+            const firstName = document.getElementById('firstName').value;
+            
+            if (!email || !firstName) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            // Show loading
+            loadingOverlay.classList.add('show');
+            completeOrderBtn.disabled = true;
+
+            // Simulate payment processing
+            setTimeout(() => {
+                loadingOverlay.classList.remove('show');
+                successMessage.classList.add('show');
+                completeOrderBtn.textContent = 'Order Completed ✓';
+                
+                // In a real app, redirect to success page
+                setTimeout(() => {
+                    console.log('Redirect to success/dashboard page');
+                }, 2000);
+            }, 2000);
+        });
+
+        // Promo code
+        const promoApplyBtn = document.querySelector('.promo-apply-btn');
+        promoApplyBtn.addEventListener('click', () => {
+            alert('Promo code functionality would be implemented here');
+        });
+    </script>
+</body>
+</html>

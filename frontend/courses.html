@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Courses - Botcito.ai</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text-primary: #1d1d1f;
+            --text-secondary: #86868b;
+            --text-link: #0066cc;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f5f7;
+            --bg-dark: #000000;
+            --border-color: #d2d2d7;
+            --shadow-subtle: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-hover: 0 8px 24px rgba(0,0,0,0.12);
+            --success-green: #34c759;
+            --warning-orange: #ff9500;
+            --accent-purple: #bf5af2;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.47059;
+            font-weight: 400;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 0 22px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        /* Course Hero */
+        .course-hero {
+            margin-top: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .course-hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 22px;
+        }
+
+        .course-hero h1 {
+            font-size: 48px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .course-hero p {
+            font-size: 21px;
+            opacity: 0.9;
+            margin-bottom: 32px;
+        }
+
+        .course-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            margin-top: 40px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 600;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        /* Course Categories */
+        .categories-section {
+            padding: 60px 0;
+            background: var(--bg-primary);
+        }
+
+        .section-container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 0 22px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .category-pills {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
+        }
+
+        .category-pill {
+            padding: 12px 24px;
+            border-radius: 24px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .category-pill:hover {
+            background: var(--bg-primary);
+            border-color: var(--text-link);
+            transform: translateY(-2px);
+        }
+
+        .category-pill.active {
+            background: var(--text-link);
+            color: white;
+        }
+
+        /* Course Grid */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .course-card {
+            background: var(--bg-primary);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: var(--shadow-subtle);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .course-thumbnail {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-badge {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--success-green);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .course-level {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .course-content {
+            padding: 24px;
+        }
+
+        .course-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .course-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .course-duration {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .course-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .star {
+            color: var(--warning-orange);
+            font-size: 14px;
+        }
+
+        .rating-value {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-left: 4px;
+        }
+
+        .course-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .course-price {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .course-price.free {
+            color: var(--success-green);
+        }
+
+        .enroll-btn {
+            padding: 8px 20px;
+            background: var(--text-link);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .enroll-btn:hover {
+            background: #0051a8;
+            transform: scale(1.05);
+        }
+
+        /* Featured Course */
+        .featured-course {
+            background: var(--bg-dark);
+            color: white;
+            padding: 60px 0;
+        }
+
+        .featured-content {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 0 22px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .featured-info h2 {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .featured-info p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .featured-list {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .featured-list li {
+            padding: 8px 0;
+            padding-left: 28px;
+            position: relative;
+            opacity: 0.9;
+        }
+
+        .featured-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success-green);
+            font-weight: bold;
+        }
+
+        .featured-cta {
+            background: white;
+            color: var(--text-primary);
+            padding: 16px 32px;
+            border-radius: 24px;
+            text-decoration: none;
+            font-size: 17px;
+            font-weight: 500;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .featured-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 255, 255, 0.2);
+        }
+
+        .featured-video {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+        }
+
+        /* Learning Path */
+        .learning-path {
+            padding: 60px 0;
+            background: var(--bg-secondary);
+        }
+
+        .path-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 22px;
+        }
+
+        .path-step {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+            position: relative;
+        }
+
+        .path-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 56px;
+            width: 2px;
+            height: calc(100% - 24px);
+            background: var(--border-color);
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+            background: var(--text-link);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .course-hero h1 {
+                font-size: 36px;
+            }
+            
+            .course-stats {
+                gap: 24px;
+            }
+            
+            .featured-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="logo">botcito.ai</a>
+            <div class="nav-links">
+                <a href="marketplace.html">Bots</a>
+                <a href="courses.html" style="color: var(--text-link);">Courses</a>
+                <a href="#bundles">Bundles</a>
+                <a href="dashboard.html">Dashboard</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Course Hero -->
+    <section class="course-hero">
+        <div class="course-hero-content">
+            <h1>Master AI for Business</h1>
+            <p>From beginner basics to advanced automation, learn how to leverage AI to transform your workflow</p>
+            <div class="course-stats">
+                <div class="stat">
+                    <span class="stat-value">15+</span>
+                    <span class="stat-label">Courses</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">50+</span>
+                    <span class="stat-label">Hours of Content</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">10k+</span>
+                    <span class="stat-label">Students</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Course Categories -->
+    <section class="categories-section">
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title">Browse Courses</h2>
+                <p class="section-subtitle">Choose your learning path</p>
+            </div>
+
+            <div class="category-pills">
+                <a href="#" class="category-pill active">All Courses</a>
+                <a href="#" class="category-pill">Beginner</a>
+                <a href="#" class="category-pill">Intermediate</a>
+                <a href="#" class="category-pill">Advanced</a>
+                <a href="#" class="category-pill">ChatGPT</a>
+                <a href="#" class="category-pill">Automation</a>
+            </div>
+
+            <div class="courses-grid">
+                <!-- Course 1 -->
+                <div class="course-card">
+                    <div class="course-thumbnail">
+                        <span>🎯</span>
+                        <span class="course-badge">BESTSELLER</span>
+                        <span class="course-level">Beginner</span>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">AI for Absolute Beginners</h3>
+                        <p class="course-description">Start your AI journey with this comprehensive introduction to artificial intelligence and its practical applications.</p>
+                        <div class="course-meta">
+                            <span class="course-duration">⏱️ 4 hours</span>
+                            <div class="course-rating">
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="rating-value">(4.9)</span>
+                            </div>
+                        </div>
+                        <div class="course-footer">
+                            <span class="course-price free">FREE</span>
+                            <button class="enroll-btn">Start Learning</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course 2 -->
+                <div class="course-card">
+                    <div class="course-thumbnail" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <span>🤖</span>
+                        <span class="course-level">Beginner</span>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">ChatGPT Mastery</h3>
+                        <p class="course-description">Learn how to use ChatGPT like a pro. Master prompting techniques and unlock the full potential of AI assistants.</p>
+                        <div class="course-meta">
+                            <span class="course-duration">⏱️ 6 hours</span>
+                            <div class="course-rating">
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="rating-value">(4.8)</span>
+                            </div>
+                        </div>
+                        <div class="course-footer">
+                            <span class="course-price">$29</span>
+                            <button class="enroll-btn">Enroll Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course 3 -->
+                <div class="course-card">
+                    <div class="course-thumbnail" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                        <span>⚡</span>
+                        <span class="course-badge">NEW</span>
+                        <span class="course-level">Intermediate</span>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">AI Automation for Business</h3>
+                        <p class="course-description">Automate repetitive tasks and streamline your workflow using AI tools and custom bot configurations.</p>
+                        <div class="course-meta">
+                            <span class="course-duration">⏱️ 8 hours</span>
+                            <div class="course-rating">
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="rating-value">(4.7)</span>
+                            </div>
+                        </div>
+                        <div class="course-footer">
+                            <span class="course-price">$49</span>
+                            <button class="enroll-btn">Enroll Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course 4 -->
+                <div class="course-card">
+                    <div class="course-thumbnail" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+                        <span>📊</span>
+                        <span class="course-level">Advanced</span>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">Advanced Bot Development</h3>
+                        <p class="course-description">Create your own custom AI bots tailored to specific business needs. Learn prompt engineering at an expert level.</p>
+                        <div class="course-meta">
+                            <span class="course-duration">⏱️ 12 hours</span>
+                            <div class="course-rating">
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="rating-value">(5.0)</span>
+                            </div>
+                        </div>
+                        <div class="course-footer">
+                            <span class="course-price">$99</span>
+                            <button class="enroll-btn">Enroll Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course 5 -->
+                <div class="course-card">
+                    <div class="course-thumbnail" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+                        <span>💼</span>
+                        <span class="course-level">Intermediate</span>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">AI for Marketing Teams</h3>
+                        <p class="course-description">Transform your marketing strategy with AI. Learn content creation, campaign optimization, and data analysis.</p>
+                        <div class="course-meta">
+                            <span class="course-duration">⏱️ 10 hours</span>
+                            <div class="course-rating">
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="rating-value">(4.6)</span>
+                            </div>
+                        </div>
+                        <div class="course-footer">
+                            <span class="course-price">$79</span>
+                            <button class="enroll-btn">Enroll Now</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Course 6 -->
+                <div class="course-card">
+                    <div class="course-thumbnail" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+                        <span>🚀</span>
+                        <span class="course-badge">BUNDLE</span>
+                        <span class="course-level">All Levels</span>
+                    </div>
+                    <div class="course-content">
+                        <h3 class="course-title">Complete AI Bundle</h3>
+                        <p class="course-description">Get lifetime access to all courses and future updates. The ultimate package for AI mastery.</p>
+                        <div class="course-meta">
+                            <span class="course-duration">⏱️ 50+ hours</span>
+                            <div class="course-rating">
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="star">⭐</span>
+                                <span class="rating-value">(4.9)</span>
+                            </div>
+                        </div>
+                        <div class="course-footer">
+                            <span class="course-price">$199</span>
+                            <button class="enroll-btn">Get Bundle</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Course -->
+    <section class="featured-course">
+        <div class="featured-content">
+            <div class="featured-info">
+                <h2>Featured: Zero to AI Hero</h2>
+                <p>Our flagship program that takes you from complete beginner to AI power user in just 30 days. Join thousands who have transformed their careers.</p>
+                <ul class="featured-list">
+                    <li>30-day structured learning path</li>
+                    <li>Daily practical exercises</li>
+                    <li>Private community access</li>
+                    <li>1-on-1 mentorship sessions</li>
+                    <li>Certificate of completion</li>
+                </ul>
+                <a href="#" class="featured-cta">Learn More →</a>
+            </div>
+            <div class="featured-video">
+                ▶️
+            </div>
+        </div>
+    </section>
+
+    <!-- Learning Path -->
+    <section class="learning-path">
+        <div class="path-container">
+            <div class="section-header">
+                <h2 class="section-title">Your Learning Journey</h2>
+                <p class="section-subtitle">Follow our recommended path to AI mastery</p>
+            </div>
+
+            <div class="path-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3 class="step-title">Start with the Basics</h3>
+                    <p class="step-description">Understanding AI fundamentals and how it can transform your work</p>
+                </div>
+            </div>
+
+            <div class="path-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3 class="step-title">Master ChatGPT</h3>
+                    <p class="step-description">Learn prompting techniques and best practices for AI assistants</p>
+                </div>
+            </div>
+
+            <div class="path-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3 class="step-title">Implement Automation</h3>
+                    <p class="step-description">Set up your bot workforce and automate repetitive tasks</p>
+                </div>
+            </div>
+
+            <div class="path-step">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3 class="step-title">Advanced Techniques</h3>
+                    <p class="step-description">Create custom solutions and become an AI power user</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Category filtering
+        const categoryPills = document.querySelectorAll('.category-pill');
+        categoryPills.forEach(pill => {
+            pill.addEventListener('click', (e) => {
+                e.preventDefault();
+                categoryPills.forEach(p => p.classList.remove('active'));
+                pill.classList.add('active');
+                // In a real app, this would filter the courses
+            });
+        });
+
+        // Course card interactions
+        const courseCards = document.querySelectorAll('.course-card');
+        courseCards.forEach(card => {
+            card.addEventListener('click', () => {
+                // In a real app, navigate to course detail page
+                console.log('Navigate to course details');
+            });
+        });
+
+        // Enroll button handling
+        const enrollBtns = document.querySelectorAll('.enroll-btn');
+        enrollBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // In a real app, add to cart or start enrollment
+                alert('Course enrollment would start here');
+            });
+        });
+    </script>
+</body>
+</html>
