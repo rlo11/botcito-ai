@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botcito SaaS API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+        }
+        
+        .status {
+            text-align: center;
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        
+        .status.connected {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+        
+        .status.disconnected {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+        
+        .test-section {
+            background: #1a1a1a;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 1px solid #333;
+        }
+        
+        .test-section h2 {
+            margin-bottom: 20px;
+            color: #a78bfa;
+            font-size: 1.5rem;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .test-card {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+        
+        .test-card h3 {
+            margin-bottom: 15px;
+            color: #e9d5ff;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .response {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .bot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .bot-card {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #444;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .bot-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .bot-card .emoji {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .bot-card .name {
+            font-weight: 600;
+            color: #e9d5ff;
+            margin-bottom: 5px;
+        }
+        
+        .bot-card .category {
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Botcito SaaS API Tester</h1>
+        
+        <div class="status" id="status">
+            Checking connection...
+        </div>
+        
+        <!-- Bot Templates Test -->
+        <div class="test-section">
+            <h2>🤖 Bot Marketplace</h2>
+            <button onclick="loadBotTemplates()">Load Bot Templates</button>
+            <div id="botTemplates" class="bot-grid"></div>
+        </div>
+        
+        <!-- Auth Test -->
+        <div class="test-section">
+            <h2>🔐 Authentication</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3>Register</h3>
+                    <input type="email" id="regEmail" placeholder="Email" value="test@example.com">
+                    <input type="password" id="regPassword" placeholder="Password" value="TestPass123">
+                    <input type="text" id="regFirstName" placeholder="First Name" value="Test">
+                    <input type="text" id="regLastName" placeholder="Last Name" value="User">
+                    <button onclick="register()">Register</button>
+                    <div id="regResponse" class="response"></div>
+                </div>
+                
+                <div class="test-card">
+                    <h3>Login</h3>
+                    <input type="email" id="loginEmail" placeholder="Email" value="test@example.com">
+                    <input type="password" id="loginPassword" placeholder="Password" value="TestPass123">
+                    <button onclick="login()">Login</button>
+                    <div id="loginResponse" class="response"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Subscription Test -->
+        <div class="test-section">
+            <h2>💳 Subscription</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3>Check Subscription Status</h3>
+                    <button onclick="checkSubscription()" id="subStatusBtn" disabled>Check Status</button>
+                    <div id="subStatusResponse" class="response"></div>
+                </div>
+                
+                <div class="test-card">
+                    <h3>Create Checkout Session</h3>
+                    <select id="planType" style="width: 100%; padding: 10px; margin: 10px 0; background: #2a2a2a; border: 1px solid #444; border-radius: 8px; color: white;">
+                        <option value="monthly">Monthly ($27/mo)</option>
+                        <option value="lifetime">Lifetime ($97)</option>
+                    </select>
+                    <button onclick="createCheckout()" id="checkoutBtn" disabled>Create Checkout</button>
+                    <div id="checkoutResponse" class="response"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Test -->
+        <div class="test-section">
+            <h2>💬 Chat Test</h2>
+            <div class="test-grid">
+                <div class="test-card">
+                    <h3>Start Conversation</h3>
+                    <input type="text" id="botSlug" placeholder="Bot slug (e.g., cody-copywriter)" value="cody-copywriter">
+                    <button onclick="startConversation()" id="startChatBtn" disabled>Start Chat</button>
+                    <div id="startChatResponse" class="response"></div>
+                </div>
+                
+                <div class="test-card">
+                    <h3>Send Message</h3>
+                    <input type="text" id="conversationId" placeholder="Conversation ID">
+                    <input type="text" id="message" placeholder="Your message" value="Help me write a sales page headline">
+                    <button onclick="sendMessage()" id="sendMsgBtn" disabled>Send Message</button>
+                    <div id="sendMsgResponse" class="response"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        let authToken = null;
+        
+        // Check connection on load
+        window.onload = async function() {
+            try {
+                const response = await fetch(`${API_BASE}/`);
+                const data = await response.json();
+                
+                if (data.status === 'ok') {
+                    document.getElementById('status').className = 'status connected';
+                    document.getElementById('status').textContent = '✅ Connected to API';
+                } else {
+                    throw new Error('Invalid response');
+                }
+            } catch (error) {
+                document.getElementById('status').className = 'status disconnected';
+                document.getElementById('status').textContent = '❌ Not Connected - ' + error.message;
+            }
+        };
+        
+        // Load bot templates
+        async function loadBotTemplates() {
+            try {
+                const response = await fetch(`${API_BASE}/api/bots/templates`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const container = document.getElementById('botTemplates');
+                    container.innerHTML = data.data.bots.map(bot => `
+                        <div class="bot-card" onclick="selectBot('${bot.slug}')">
+                            <div class="emoji">${bot.icon_emoji}</div>
+                            <div class="name">${bot.name}</div>
+                            <div class="category">${bot.category}</div>
+                            <div style="font-size: 0.75rem; margin-top: 5px; color: #6b7280;">
+                                ${bot.description}
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    throw new Error(data.message || 'Failed to load bots');
+                }
+            } catch (error) {
+                alert('Error loading bots: ' + error.message);
+            }
+        }
+        
+        function selectBot(slug) {
+            document.getElementById('botSlug').value = slug;
+        }
+        
+        // Register
+        async function register() {
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const firstName = document.getElementById('regFirstName').value;
+            const lastName = document.getElementById('regLastName').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, firstName, lastName })
+                });
+                
+                const data = await response.json();
+                document.getElementById('regResponse').textContent = JSON.stringify(data, null, 2);
+                
+                if (data.success) {
+                    authToken = data.data.accessToken;
+                    enableAuthenticatedButtons();
+                }
+            } catch (error) {
+                document.getElementById('regResponse').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        // Login
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                document.getElementById('loginResponse').textContent = JSON.stringify(data, null, 2);
+                
+                if (data.success) {
+                    authToken = data.data.accessToken;
+                    enableAuthenticatedButtons();
+                }
+            } catch (error) {
+                document.getElementById('loginResponse').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        // Enable buttons after login
+        function enableAuthenticatedButtons() {
+            document.getElementById('subStatusBtn').disabled = false;
+            document.getElementById('checkoutBtn').disabled = false;
+            document.getElementById('startChatBtn').disabled = false;
+            document.getElementById('sendMsgBtn').disabled = false;
+        }
+        
+        // Check subscription
+        async function checkSubscription() {
+            try {
+                const response = await fetch(`${API_BASE}/api/subscriptions/status`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                document.getElementById('subStatusResponse').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('subStatusResponse').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        // Create checkout
+        async function createCheckout() {
+            const planType = document.getElementById('planType').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/subscriptions/create-checkout`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ planType })
+                });
+                
+                const data = await response.json();
+                document.getElementById('checkoutResponse').textContent = JSON.stringify(data, null, 2);
+                
+                if (data.checkoutUrl) {
+                    // In real app, you'd redirect to Stripe
+                    document.getElementById('checkoutResponse').innerHTML += 
+                        `<br><br>✅ Checkout URL would redirect to: ${data.checkoutUrl}`;
+                }
+            } catch (error) {
+                document.getElementById('checkoutResponse').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        // Start conversation
+        async function startConversation() {
+            const botSlug = document.getElementById('botSlug').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/chat/conversations/start`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ botSlug })
+                });
+                
+                const data = await response.json();
+                document.getElementById('startChatResponse').textContent = JSON.stringify(data, null, 2);
+                
+                if (data.success && data.data.conversationId) {
+                    document.getElementById('conversationId').value = data.data.conversationId;
+                }
+            } catch (error) {
+                document.getElementById('startChatResponse').textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        // Send message
+        async function sendMessage() {
+            const conversationId = document.getElementById('conversationId').value;
+            const message = document.getElementById('message').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/chat/messages/send`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ conversationId, message })
+                });
+                
+                const data = await response.json();
+                document.getElementById('sendMsgResponse').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('sendMsgResponse').textContent = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

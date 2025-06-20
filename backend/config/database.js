@@ -1,69 +1,55 @@
 // config/database.js
-const { Pool } = require('pg');
+const { Sequelize } = require('sequelize');
 const logger = require('./logger');
 
-const pool = new Pool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  max: 20, // maximum number of clients in the pool
-  idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed
-  connectionTimeoutMillis: 2000, // how long to wait when connecting a new client
-});
+// Create Sequelize instance
+const sequelize = new Sequelize(
+  process.env.DB_NAME || 'botcito_db',
+  process.env.DB_USER || 'postgres', 
+  process.env.DB_PASSWORD || 'Snaked0911!!1!',
+  {
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
+    dialect: 'postgres',
+    logging: process.env.NODE_ENV === 'development' ? logger.debug.bind(logger) : false,
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    }
+  }
+);
 
 // Test database connection
 const connectDB = async () => {
   try {
-    const client = await pool.connect();
-    const result = await client.query('SELECT NOW()');
-    client.release();
-    logger.info(`Database connected successfully at ${result.rows[0].now}`);
-    return true;
+    await sequelize.authenticate();
+    logger.info('PostgreSQL connected successfully');
+    
+    // Sync all models with database
+    if (process.env.NODE_ENV === 'development') {
+      await sequelize.sync({ alter: true });
+      logger.info('Database models synchronized');
+    }
+    
+    return sequelize;
   } catch (error) {
-    logger.error('Database connection failed:', error);
-    throw error;
+    logger.error('PostgreSQL connection failed:', error);
+    process.exit(1);
   }
 };
 
-// Query helper with error handling
-const query = async (text, params) => {
-  const start = Date.now();
+// Graceful shutdown
+process.on('SIGINT', async () => {
   try {
-    const result = await pool.query(text, params);
-    const duration = Date.now() - start;
-    logger.debug('Executed query', { text, duration, rows: result.rowCount });
-    return result;
+    await sequelize.close();
+    logger.info('PostgreSQL connection closed');
+    process.exit(0);
   } catch (error) {
-    logger.error('Database query error:', { text, error: error.message });
-    throw error;
+    logger.error('Error closing PostgreSQL connection:', error);
+    process.exit(1);
   }
-};
+});
 
-// Transaction helper
-const withTransaction = async (callback) => {
-  const client = await pool.connect();
-  try {
-    await client.query('BEGIN');
-    const result = await callback(client);
-    await client.query('COMMIT');
-    return result;
-  } catch (error) {
-    await client.query('ROLLBACK');
-    throw error;
-  } finally {
-    client.release();
-  }
-};
-
-// Get a client from the pool
-const getClient = () => pool.connect();
-
-module.exports = {
-  pool,
-  connectDB,
-  query,
-  withTransaction,
-  getClient
-};
+module.exports = { sequelize, connectDB };

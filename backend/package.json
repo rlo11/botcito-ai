@@ -9,28 +9,38 @@
     "test": "jest",
     "migrate": "node migrations/run.js"
   },
-  "keywords": ["ai", "bots", "marketplace", "api"],
+  "keywords": [
+    "ai",
+    "bots",
+    "marketplace",
+    "api"
+  ],
   "author": "Botcito.ai",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2",
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "pg": "^8.11.3",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "express-validator": "^7.0.1",
-    "stripe": "^14.5.0",
-    "multer": "^1.4.5-lts.1",
+    "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
     "helmet": "^7.1.0",
-    "compression": "^1.7.4",
-    "winston": "^3.11.0",
-    "uuid": "^9.0.1"
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^7.0.3",
+    "pg": "^8.11.3",
+    "sequelize": "^6.37.7",
+    "sequelize-cli": "^6.6.3",
+    "socket.io": "^4.8.1",
+    "stripe": "^14.25.0",
+    "uuid": "^9.0.1",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2",
+    "@types/sequelize": "^4.28.20",
     "jest": "^29.7.0",
+    "nodemon": "^3.0.2",
     "supertest": "^6.3.3"
   }
 }

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botcito.ai API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .test-section {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        h2 {
+            color: #6366f1;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.75rem;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+        
+        button {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 1rem;
+            margin-top: 1rem;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .response {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .success {
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+        
+        .error {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        .info {
+            background: #1e3a8a;
+            border: 1px solid #3b82f6;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 2rem;
+            color: #93bbfc;
+        }
+        
+        .endpoint {
+            background: #0a0a0a;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: monospace;
+            display: inline-block;
+            margin: 0.25rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Botcito.ai API Tester</h1>
+        
+        <div class="info">
+            <strong>API Base URL:</strong> <span class="endpoint">http://localhost:5000</span><br>
+            <strong>Status:</strong> <span id="status">Checking...</span>
+        </div>
+        
+        <!-- Register Test -->
+        <div class="test-section">
+            <h2>📝 Register New User</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" value="test@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" value="TestPass123" required>
+                </div>
+                <div class="form-group">
+                    <label for="regFirstName">First Name</label>
+                    <input type="text" id="regFirstName" value="Test" required>
+                </div>
+                <div class="form-group">
+                    <label for="regLastName">Last Name</label>
+                    <input type="text" id="regLastName" value="User" required>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+            <div id="registerResponse" class="response" style="display: none;"></div>
+        </div>
+        
+        <!-- Login Test -->
+        <div class="test-section">
+            <h2>🔐 Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" value="test@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" value="TestPass123" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <div id="loginResponse" class="response" style="display: none;"></div>
+        </div>
+        
+        <!-- Health Check -->
+        <div class="test-section">
+            <h2>💓 Health Check</h2>
+            <button onclick="checkHealth()">Check API Health</button>
+            <div id="healthResponse" class="response" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        
+        // Check API status on load
+        window.onload = async () => {
+            try {
+                const response = await fetch(`${API_BASE}/`);
+                const data = await response.json();
+                document.getElementById('status').textContent = '✅ Connected';
+                document.getElementById('status').style.color = '#22c55e';
+            } catch (error) {
+                document.getElementById('status').textContent = '❌ Not Connected';
+                document.getElementById('status').style.color = '#ef4444';
+            }
+        };
+        
+        // Register form handler
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value,
+                firstName: document.getElementById('regFirstName').value,
+                lastName: document.getElementById('regLastName').value
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                const responseDiv = document.getElementById('registerResponse');
+                responseDiv.style.display = 'block';
+                responseDiv.className = response.ok ? 'response success' : 'response error';
+                responseDiv.textContent = JSON.stringify(result, null, 2);
+                
+                // If successful, save the token
+                if (result.data && result.data.accessToken) {
+                    localStorage.setItem('accessToken', result.data.accessToken);
+                    localStorage.setItem('refreshToken', result.data.refreshToken);
+                }
+            } catch (error) {
+                const responseDiv = document.getElementById('registerResponse');
+                responseDiv.style.display = 'block';
+                responseDiv.className = 'response error';
+                responseDiv.textContent = `Error: ${error.message}`;
+            }
+        });
+        
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                email: document.getElementById('loginEmail').value,
+                password: document.getElementById('loginPassword').value
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                const responseDiv = document.getElementById('loginResponse');
+                responseDiv.style.display = 'block';
+                responseDiv.className = response.ok ? 'response success' : 'response error';
+                responseDiv.textContent = JSON.stringify(result, null, 2);
+                
+                // If successful, save the token
+                if (result.data && result.data.accessToken) {
+                    localStorage.setItem('accessToken', result.data.accessToken);
+                    localStorage.setItem('refreshToken', result.data.refreshToken);
+                }
+            } catch (error) {
+                const responseDiv = document.getElementById('loginResponse');
+                responseDiv.style.display = 'block';
+                responseDiv.className = 'response error';
+                responseDiv.textContent = `Error: ${error.message}`;
+            }
+        });
+        
+        // Health check
+        async function checkHealth() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const result = await response.json();
+                const responseDiv = document.getElementById('healthResponse');
+                responseDiv.style.display = 'block';
+                responseDiv.className = 'response success';
+                responseDiv.textContent = JSON.stringify(result, null, 2);
+            } catch (error) {
+                const responseDiv = document.getElementById('healthResponse');
+                responseDiv.style.display = 'block';
+                responseDiv.className = 'response error';
+                responseDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

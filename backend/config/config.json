@@ -1,0 +1,30 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "Snaked0911!!1!",
+    "database": "botcito_db",
+    "host": "localhost",
+    "port": 5432,
+    "dialect": "postgres",
+    "logging": false
+  },
+  "test": {
+    "username": "postgres",
+    "password": "Snaked0911!!1!",
+    "database": "botcito_test",
+    "host": "localhost",
+    "port": 5432,
+    "dialect": "postgres",
+    "logging": false
+  },
+  "production": {
+    "use_env_variable": "DATABASE_URL",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    }
+  }
+}

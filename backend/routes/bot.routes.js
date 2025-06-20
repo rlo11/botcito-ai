@@ -1,16 +1,16 @@
+// routes/bot.routes.js
 const express = require('express');
-const { verifyToken, optionalAuth } = require('../middleware/auth.middleware');
+const router = express.Router();
+const { verifyToken } = require('../middleware/auth.middleware');
 const botController = require('../controllers/bot.controller');
 
-const router = express.Router();
+// Public routes - anyone can see available bot templates
+router.get('/templates', botController.getBotTemplates);
 
-// Public routes
-router.get('/', optionalAuth, botController.getAllBots);
-router.get('/:identifier', optionalAuth, botController.getBot);
-router.get('/:identifier/reviews', botController.getBotReviews);
-
-// Protected routes
-router.get('/user/purchased', verifyToken, botController.getUserBots);
-router.post('/:identifier/reviews', verifyToken, botController.addBotReview);
+// Protected routes - require authentication
+router.get('/user', verifyToken, botController.getUserBots);
+router.post('/user/add', verifyToken, botController.addUserBot);
+router.delete('/user/:botTemplateId', verifyToken, botController.removeUserBot);
+router.get('/:botSlug', verifyToken, botController.getBotDetails);
 
 module.exports = router;
