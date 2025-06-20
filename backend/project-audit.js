@@ -5,7 +5,8 @@ const fs = require('fs');
 const path = require('path');
 
 console.log('🔍 BOTCITO.AI PROJECT AUDIT\n');
-console.log('=' .repeat(50));
+console.log('='
+  .repeat(50));
 
 // Check package.json for database type
 console.log('\n📦 DATABASE DEPENDENCIES:');

@@ -1,4 +1,4 @@
-// controllers/botController.js
+// controllers/bot.controller.js
 const User = require('../models/User');
 
 // Get all available bot templates

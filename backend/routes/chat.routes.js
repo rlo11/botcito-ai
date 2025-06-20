@@ -1,11 +1,11 @@
 // routes/chat.routes.js
 const express = require('express');
 const router = express.Router();
-const { verifyToken } = require('../middleware/auth.middleware');
+const { authenticate } = require('../middleware/auth.middleware');
 const chatController = require('../controllers/chat.controller');
 
 // All chat routes require authentication
-router.use(verifyToken);
+router.use(authenticate);
 
 // Start new conversation
 router.post('/conversations/start', chatController.startConversation);

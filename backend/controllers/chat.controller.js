@@ -1,5 +1,5 @@
-// controllers/chatController.js
-const { query, withTransaction } = require('../config/database');
+// controllers/chat.controller.js
+// const { query, withTransaction } = require('../config/database');
 const logger = require('../config/logger');
 
 // Import your AI provider (choose one)
